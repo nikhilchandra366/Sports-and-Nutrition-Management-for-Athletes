@@ -13,11 +13,13 @@ import {
   X,
   LogIn,
   User,
-  LogOut
+  LogOut,
+  Dumbbell
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -61,14 +63,14 @@ export function Navbar() {
 
   const navItems = [
     { name: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
-    { name: "Programs", path: "/programs", icon: <Calendar className="h-5 w-5" /> },
+    { name: "Programs", path: "/programs", icon: <Dumbbell className="h-5 w-5" /> },
     { name: "Nutrition", path: "/nutrition", icon: <Utensils className="h-5 w-5" /> },
     { name: "Progress", path: "/progress", icon: <BarChart2 className="h-5 w-5" /> },
     { name: "Community", path: "/community", icon: <MessageSquare className="h-5 w-5" /> },
   ];
 
   return (
-    <nav className="bg-background border-b">
+    <nav className="bg-background border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -83,13 +85,15 @@ export function Navbar() {
               <Link 
                 key={item.name} 
                 to={item.path}
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-secondary"
+                className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 {item.icon}
                 <span className="ml-2">{item.name}</span>
               </Link>
             ))}
-            <div className="ml-4 flex items-center">
+            <div className="ml-4 flex items-center space-x-2">
+              <ThemeToggle />
+              
               {session ? (
                 <div className="flex items-center space-x-2">
                   <Button variant="ghost" asChild>
@@ -115,10 +119,11 @@ export function Navbar() {
           </div>
           
           {/* Mobile nav toggle */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+              className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
               <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
@@ -139,19 +144,19 @@ export function Navbar() {
               <Link
                 key={item.name}
                 to={item.path}
-                className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
                 onClick={closeMenu}
               >
                 {item.icon}
                 <span className="ml-2">{item.name}</span>
               </Link>
             ))}
-            <div className="pt-4 pb-3 border-t border-gray-200">
+            <div className="pt-4 pb-3 border-t border-muted">
               {session ? (
                 <div className="space-y-2">
                   <Link
                     to="/profile"
-                    className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                    className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
                     onClick={closeMenu}
                   >
                     <User className="h-5 w-5 mr-2" />
@@ -162,7 +167,7 @@ export function Navbar() {
                       handleSignOut();
                       closeMenu();
                     }}
-                    className="flex w-full items-center px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                    className="flex w-full items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
                   >
                     <LogOut className="h-5 w-5 mr-2" />
                     Sign out
@@ -171,7 +176,7 @@ export function Navbar() {
               ) : (
                 <Link
                   to="/auth"
-                  className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                  className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
                   onClick={closeMenu}
                 >
                   <LogIn className="h-5 w-5 mr-2" />

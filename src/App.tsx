@@ -15,6 +15,7 @@ import Programs from "./pages/Programs";
 import Nutrition from "./pages/Nutrition";
 import Progress from "./pages/Progress";
 import Community from "./pages/Community";
+import { ThemeProvider } from "./providers/ThemeProvider";
 
 const queryClient = new QueryClient();
 
@@ -53,60 +54,62 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/programs" 
-            element={
-              <ProtectedRoute>
-                <Programs />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/nutrition" 
-            element={
-              <ProtectedRoute>
-                <Nutrition />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/progress" 
-            element={
-              <ProtectedRoute>
-                <Progress />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/community" 
-            element={
-              <ProtectedRoute>
-                <Community />
-              </ProtectedRoute>
-            } 
-          />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider defaultTheme="system" storageKey="athlete-aligned-theme">
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/programs" 
+              element={
+                <ProtectedRoute>
+                  <Programs />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/nutrition" 
+              element={
+                <ProtectedRoute>
+                  <Nutrition />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/progress" 
+              element={
+                <ProtectedRoute>
+                  <Progress />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/community" 
+              element={
+                <ProtectedRoute>
+                  <Community />
+                </ProtectedRoute>
+              } 
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
