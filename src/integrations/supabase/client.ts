@@ -68,6 +68,88 @@ interface CustomDatabase extends Database {
         Relationships: [];
       };
       
+      forum_topics: {
+        Row: {
+          id: string;
+          category_id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          view_count: number;
+          created_at: string;
+          updated_at: string;
+          posts_count?: number;
+        };
+        Insert: {
+          id?: string;
+          category_id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          view_count?: number;
+          created_at?: string;
+          updated_at?: string;
+          posts_count?: number;
+        };
+        Update: {
+          id?: string;
+          category_id?: string;
+          user_id?: string;
+          title?: string;
+          content?: string;
+          view_count?: number;
+          created_at?: string;
+          updated_at?: string;
+          posts_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "forum_topics_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "forum_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "forum_topics_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      
+      profiles: {
+        Row: {
+          id: string;
+          username: string;
+          avatar_url: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          username: string;
+          avatar_url?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          username?: string;
+          avatar_url?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      
       sport_categories: {
         Row: {
           id: string;
@@ -136,6 +218,119 @@ interface CustomDatabase extends Database {
             columns: ["sport_category_id"];
             isOneToOne: false;
             referencedRelation: "sport_categories";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      
+      food_items: {
+        Row: {
+          id: string;
+          name: string;
+          serving_size: string;
+          calories: number;
+          protein_g: number;
+          carbs_g: number;
+          fat_g: number;
+          fiber_g: number;
+          sugar_g: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          serving_size: string;
+          calories: number;
+          protein_g: number;
+          carbs_g: number;
+          fat_g: number;
+          fiber_g: number;
+          sugar_g: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          serving_size?: string;
+          calories?: number;
+          protein_g?: number;
+          carbs_g?: number;
+          fat_g?: number;
+          fiber_g?: number;
+          sugar_g?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      
+      user_meals: {
+        Row: {
+          id: string;
+          user_id: string;
+          meal_type: string;
+          meal_date: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          meal_type: string;
+          meal_date: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          meal_type?: string;
+          meal_date?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_meals_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      
+      meal_items: {
+        Row: {
+          id: string;
+          meal_id: string;
+          food_item_id: string;
+          quantity: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          meal_id: string;
+          food_item_id: string;
+          quantity: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          meal_id?: string;
+          food_item_id?: string;
+          quantity?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "meal_items_meal_id_fkey";
+            columns: ["meal_id"];
+            isOneToOne: false;
+            referencedRelation: "user_meals";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "meal_items_food_item_id_fkey";
+            columns: ["food_item_id"];
+            isOneToOne: false;
+            referencedRelation: "food_items";
             referencedColumns: ["id"];
           }
         ];

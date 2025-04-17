@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,10 +31,64 @@ interface ForumTopic {
   };
 }
 
+const mockTopics: ForumTopic[] = [
+  {
+    id: "1",
+    category_id: "1",
+    user_id: "1",
+    title: "Best training program for beginners",
+    content: "I'm new to fitness and looking for advice on how to start a training routine.",
+    view_count: 120,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    posts_count: 5,
+    user_profile: {
+      username: "FitnessNewbie",
+      avatar_url: ""
+    }
+  },
+  {
+    id: "2",
+    category_id: "2",
+    user_id: "2",
+    title: "Nutrition tips for marathon training",
+    content: "I'm training for my first marathon. What should I be eating before, during, and after long runs?",
+    view_count: 85,
+    created_at: new Date(Date.now() - 86400000).toISOString(), // yesterday
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+    posts_count: 3,
+    user_profile: {
+      username: "RunnerGuy",
+      avatar_url: ""
+    }
+  }
+];
+
+const mockCategories: ForumCategory[] = [
+  {
+    id: "1",
+    name: "Training Programs",
+    description: "Discuss training programs, exercises, and workout routines",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "2",
+    name: "Nutrition & Diet",
+    description: "Share nutrition tips, diet plans, and healthy recipes",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "3",
+    name: "Recovery & Injury Prevention",
+    description: "Discuss techniques for recovery and preventing injuries",
+    created_at: new Date().toISOString()
+  }
+];
+
 const Community = () => {
-  const [categories, setCategories] = useState<ForumCategory[]>([]);
-  const [popularTopics, setPopularTopics] = useState<ForumTopic[]>([]);
-  const [recentTopics, setRecentTopics] = useState<ForumTopic[]>([]);
+  const [categories, setCategories] = useState<ForumCategory[]>(mockCategories);
+  const [popularTopics, setPopularTopics] = useState<ForumTopic[]>(mockTopics);
+  const [recentTopics, setRecentTopics] = useState<ForumTopic[]>(mockTopics);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -48,33 +101,46 @@ const Community = () => {
           .select("*");
 
         if (categoriesError) throw categoriesError;
-        setCategories(categoriesData || []);
+        
+        if (categoriesData && categoriesData.length > 0) {
+          setCategories(categoriesData);
+        }
 
+        // Since the profiles table may not be set up yet, we'll keep using mock data for topics
+        // In a real implementation, we would fetch forum_topics and join with profiles
+        
+        // Uncomment the following when the forum_topics and profiles tables are set up:
+        /*
         // Fetch popular topics
         const { data: popularData, error: popularError } = await supabase
           .from("forum_topics")
           .select(`
             *,
-            user_profile:profiles!forum_topics_user_id_fkey(username, avatar_url)
+            user_profile:profiles(username, avatar_url)
           `)
           .order('view_count', { ascending: false })
           .limit(5);
 
         if (popularError) throw popularError;
-        setPopularTopics(popularData || []);
+        if (popularData && popularData.length > 0) {
+          setPopularTopics(popularData);
+        }
 
         // Fetch recent topics
         const { data: recentData, error: recentError } = await supabase
           .from("forum_topics")
           .select(`
             *,
-            user_profile:profiles!forum_topics_user_id_fkey(username, avatar_url)
+            user_profile:profiles(username, avatar_url)
           `)
           .order('created_at', { ascending: false })
           .limit(5);
 
         if (recentError) throw recentError;
-        setRecentTopics(recentData || []);
+        if (recentData && recentData.length > 0) {
+          setRecentTopics(recentData);
+        }
+        */
       } catch (error) {
         console.error("Error fetching community data:", error);
         toast({
@@ -90,7 +156,6 @@ const Community = () => {
     fetchCommunityData();
   }, [toast]);
 
-  // Format date helper function
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -100,7 +165,6 @@ const Community = () => {
     });
   };
 
-  // Get user initials for avatar fallback
   const getUserInitials = (username: string) => {
     if (!username) return "?";
     return username.charAt(0).toUpperCase();

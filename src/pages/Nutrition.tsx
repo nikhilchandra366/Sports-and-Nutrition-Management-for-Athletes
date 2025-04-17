@@ -38,14 +38,114 @@ interface MealItem {
   food_item?: FoodItem;
 }
 
+// Mock data for food items
+const mockFoodItems: FoodItem[] = [
+  {
+    id: '1',
+    name: 'Grilled Chicken Breast',
+    serving_size: '100g',
+    calories: 165,
+    protein_g: 31,
+    carbs_g: 0,
+    fat_g: 3.6,
+    fiber_g: 0,
+    sugar_g: 0
+  },
+  {
+    id: '2',
+    name: 'Brown Rice',
+    serving_size: '100g cooked',
+    calories: 112,
+    protein_g: 2.6,
+    carbs_g: 23,
+    fat_g: 0.9,
+    fiber_g: 1.8,
+    sugar_g: 0.4
+  },
+  {
+    id: '3',
+    name: 'Avocado',
+    serving_size: '1/2 medium',
+    calories: 161,
+    protein_g: 2,
+    carbs_g: 8.5,
+    fat_g: 15,
+    fiber_g: 6.7,
+    sugar_g: 0.7
+  },
+  {
+    id: '4',
+    name: 'Greek Yogurt',
+    serving_size: '170g',
+    calories: 100,
+    protein_g: 18,
+    carbs_g: 6,
+    fat_g: 0,
+    fiber_g: 0,
+    sugar_g: 6
+  },
+  {
+    id: '5',
+    name: 'Salmon',
+    serving_size: '100g',
+    calories: 208,
+    protein_g: 20,
+    carbs_g: 0,
+    fat_g: 13,
+    fiber_g: 0,
+    sugar_g: 0
+  }
+];
+
+// Mock data for meals
+const mockMeals: UserMeal[] = [
+  {
+    id: '1',
+    user_id: '1',
+    meal_type: 'breakfast',
+    meal_date: new Date().toISOString().split('T')[0],
+    items: [
+      {
+        id: '1',
+        meal_id: '1',
+        food_item_id: '4',
+        quantity: 1,
+        food_item: mockFoodItems[3]
+      }
+    ]
+  },
+  {
+    id: '2',
+    user_id: '1',
+    meal_type: 'lunch',
+    meal_date: new Date().toISOString().split('T')[0],
+    items: [
+      {
+        id: '2',
+        meal_id: '2',
+        food_item_id: '1',
+        quantity: 1,
+        food_item: mockFoodItems[0]
+      },
+      {
+        id: '3',
+        meal_id: '2',
+        food_item_id: '2',
+        quantity: 1,
+        food_item: mockFoodItems[1]
+      }
+    ]
+  }
+];
+
 const Nutrition = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
-  const [todayMeals, setTodayMeals] = useState<UserMeal[]>([]);
+  const [foodItems, setFoodItems] = useState<FoodItem[]>(mockFoodItems);
+  const [todayMeals, setTodayMeals] = useState<UserMeal[]>(mockMeals);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Mock nutrition data for demonstration
+  // Nutrition data for demonstration
   const nutritionSummary = {
     calories: { consumed: 1450, target: 2000 },
     protein: { consumed: 85, target: 140 },
@@ -58,6 +158,8 @@ const Nutrition = () => {
       try {
         const today = new Date().toISOString().split('T')[0];
         
+        // In a real implementation, you would fetch food items from the database:
+        /*
         // Fetch food database items
         const { data: foodData, error: foodError } = await supabase
           .from("food_items")
@@ -65,7 +167,9 @@ const Nutrition = () => {
           .limit(20);
         
         if (foodError) throw foodError;
-        setFoodItems(foodData || []);
+        if (foodData && foodData.length > 0) {
+          setFoodItems(foodData);
+        }
 
         // Fetch user's meals for today
         const { data: session } = await supabase.auth.getSession();
@@ -77,8 +181,11 @@ const Nutrition = () => {
             .eq("meal_date", today);
           
           if (mealsError) throw mealsError;
-          setTodayMeals(mealsData || []);
+          if (mealsData && mealsData.length > 0) {
+            setTodayMeals(mealsData);
+          }
         }
+        */
       } catch (error) {
         console.error("Error fetching nutrition data:", error);
         toast({
