@@ -124,19 +124,43 @@ interface CustomDatabase extends Database {
         Row: {
           id: string;
           username: string;
+          full_name: string | null;
+          bio: string | null;
           avatar_url: string | null;
+          weight: number | null;
+          height: number | null;
+          age: number | null;
+          gender: string | null;
+          activity_level: string | null;
+          fitness_goal: string | null;
           created_at: string;
         };
         Insert: {
           id: string;
           username: string;
+          full_name?: string | null;
+          bio?: string | null;
           avatar_url?: string | null;
+          weight?: number | null;
+          height?: number | null;
+          age?: number | null;
+          gender?: string | null;
+          activity_level?: string | null;
+          fitness_goal?: string | null;
           created_at?: string;
         };
         Update: {
           id?: string;
           username?: string;
+          full_name?: string | null;
+          bio?: string | null;
           avatar_url?: string | null;
+          weight?: number | null;
+          height?: number | null;
+          age?: number | null;
+          gender?: string | null;
+          activity_level?: string | null;
+          fitness_goal?: string | null;
           created_at?: string;
         };
         Relationships: [

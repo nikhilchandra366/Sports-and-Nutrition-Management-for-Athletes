@@ -36,12 +36,14 @@ interface Profile {
   username: string;
   full_name: string | null;
   bio: string | null;
+  avatar_url: string | null;
   weight: number | null;
   height: number | null;
   age: number | null;
   gender: string | null;
   activity_level: string | null;
   fitness_goal: string | null;
+  created_at: string;
 }
 
 const Profile = () => {
@@ -100,7 +102,8 @@ const Profile = () => {
           description: error.message,
         });
       } else if (data) {
-        // Populate form with existing data
+        // Check if profile data exists and has the required fields
+        // If not, initialize with default values
         form.reset({
           username: data.username || '',
           full_name: data.full_name || '',
