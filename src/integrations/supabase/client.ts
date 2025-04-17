@@ -103,6 +103,376 @@ export interface CustomDatabase extends Database {
           created_at?: string;
         };
       };
+      forum_topics: {
+        Row: {
+          id: string;
+          category_id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          view_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          category_id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          view_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          category_id?: string;
+          user_id?: string;
+          title?: string;
+          content?: string;
+          view_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      forum_posts: {
+        Row: {
+          id: string;
+          topic_id: string;
+          user_id: string;
+          content: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          topic_id: string;
+          user_id: string;
+          content: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          topic_id?: string;
+          user_id?: string;
+          content?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      training_programs: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          sport_category_id: string;
+          difficulty_level: string;
+          duration_weeks: number;
+          created_by: string;
+          is_public: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          sport_category_id: string;
+          difficulty_level: string;
+          duration_weeks: number;
+          created_by: string;
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string | null;
+          sport_category_id?: string;
+          difficulty_level?: string;
+          duration_weeks?: number;
+          created_by?: string;
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      workouts: {
+        Row: {
+          id: string;
+          training_program_id: string;
+          title: string;
+          description: string | null;
+          duration_minutes: number;
+          week_number: number;
+          day_number: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          training_program_id: string;
+          title: string;
+          description?: string | null;
+          duration_minutes: number;
+          week_number: number;
+          day_number: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          training_program_id?: string;
+          title?: string;
+          description?: string | null;
+          duration_minutes?: number;
+          week_number?: number;
+          day_number?: number;
+          created_at?: string;
+        };
+      };
+      exercises: {
+        Row: {
+          id: string;
+          workout_id: string;
+          name: string;
+          description: string | null;
+          sets: number | null;
+          reps: number | null;
+          duration_seconds: number | null;
+          rest_seconds: number | null;
+          video_url: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workout_id: string;
+          name: string;
+          description?: string | null;
+          sets?: number | null;
+          reps?: number | null;
+          duration_seconds?: number | null;
+          rest_seconds?: number | null;
+          video_url?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          workout_id?: string;
+          name?: string;
+          description?: string | null;
+          sets?: number | null;
+          reps?: number | null;
+          duration_seconds?: number | null;
+          rest_seconds?: number | null;
+          video_url?: string | null;
+          created_at?: string;
+        };
+      };
+      user_workouts: {
+        Row: {
+          id: string;
+          user_id: string;
+          workout_id: string | null;
+          completed_at: string;
+          notes: string | null;
+          rating: number | null;
+          duration_minutes: number | null;
+          calories_burned: number | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          workout_id?: string | null;
+          completed_at?: string;
+          notes?: string | null;
+          rating?: number | null;
+          duration_minutes?: number | null;
+          calories_burned?: number | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          workout_id?: string | null;
+          completed_at?: string;
+          notes?: string | null;
+          rating?: number | null;
+          duration_minutes?: number | null;
+          calories_burned?: number | null;
+        };
+      };
+      food_items: {
+        Row: {
+          id: string;
+          name: string;
+          serving_size: string;
+          calories: number;
+          protein_g: number;
+          carbs_g: number;
+          fat_g: number;
+          fiber_g: number | null;
+          sugar_g: number | null;
+          sodium_mg: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          serving_size: string;
+          calories: number;
+          protein_g: number;
+          carbs_g: number;
+          fat_g: number;
+          fiber_g?: number | null;
+          sugar_g?: number | null;
+          sodium_mg?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          serving_size?: string;
+          calories?: number;
+          protein_g?: number;
+          carbs_g?: number;
+          fat_g?: number;
+          fiber_g?: number | null;
+          sugar_g?: number | null;
+          sodium_mg?: number | null;
+          created_at?: string;
+        };
+      };
+      user_meals: {
+        Row: {
+          id: string;
+          user_id: string;
+          meal_type: string;
+          meal_date: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          meal_type: string;
+          meal_date: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          meal_type?: string;
+          meal_date?: string;
+          created_at?: string;
+        };
+      };
+      meal_items: {
+        Row: {
+          id: string;
+          meal_id: string;
+          food_item_id: string;
+          quantity: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          meal_id: string;
+          food_item_id: string;
+          quantity: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          meal_id?: string;
+          food_item_id?: string;
+          quantity?: number;
+          created_at?: string;
+        };
+      };
+      progress_measurements: {
+        Row: {
+          id: string;
+          user_id: string;
+          measurement_date: string;
+          weight: number | null;
+          body_fat_percentage: number | null;
+          chest_cm: number | null;
+          waist_cm: number | null;
+          hips_cm: number | null;
+          biceps_cm: number | null;
+          thighs_cm: number | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          measurement_date: string;
+          weight?: number | null;
+          body_fat_percentage?: number | null;
+          chest_cm?: number | null;
+          waist_cm?: number | null;
+          hips_cm?: number | null;
+          biceps_cm?: number | null;
+          thighs_cm?: number | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          measurement_date?: string;
+          weight?: number | null;
+          body_fat_percentage?: number | null;
+          chest_cm?: number | null;
+          waist_cm?: number | null;
+          hips_cm?: number | null;
+          biceps_cm?: number | null;
+          thighs_cm?: number | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+      };
+      user_goals: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          description: string | null;
+          target_date: string | null;
+          goal_type: string;
+          target_value: number | null;
+          current_value: number | null;
+          is_completed: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          description?: string | null;
+          target_date?: string | null;
+          goal_type: string;
+          target_value?: number | null;
+          current_value?: number | null;
+          is_completed?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          description?: string | null;
+          target_date?: string | null;
+          goal_type?: string;
+          target_value?: number | null;
+          current_value?: number | null;
+          is_completed?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: Database['public']['Views'];
     Functions: Database['public']['Functions'];
