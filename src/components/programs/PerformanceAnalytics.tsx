@@ -1,9 +1,184 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import { Download, Calendar } from "lucide-react";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent, 
+  ChartLegend, 
+  ChartLegendContent 
+} from "@/components/ui/chart";
+import { 
+  Bar, 
+  Line, 
+  Pie, 
+  BarChart as RechartsBarChart, 
+  LineChart as RechartsLineChart, 
+  PieChart as RechartsPieChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell
+} from "recharts";
+
+// Custom BarChart component using ChartContainer
+const BarChart = ({ 
+  data, 
+  categories, 
+  index, 
+  colors, 
+  valueFormatter, 
+  showLegend = true,
+  showXAxis = true,
+  showYAxis = true
+}) => (
+  <ChartContainer config={{}} className="h-full w-full">
+    <RechartsBarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+      {showXAxis && <XAxis dataKey={index} />}
+      {showYAxis && <YAxis />}
+      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+      <Tooltip content={({ active, payload, label }) => {
+        if (active && payload?.length) {
+          return (
+            <div className="rounded-lg border border-border bg-background p-2 shadow-sm">
+              <div className="font-medium">{label}</div>
+              <div className="mt-1 flex flex-col gap-0.5">
+                {payload.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div 
+                      className="h-2 w-2 rounded-full" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {item.name}: {valueFormatter ? valueFormatter(item.value) : item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+        return null;
+      }} />
+      {showLegend && <Legend />}
+      {categories.map((category, index) => (
+        <Bar 
+          key={category}
+          dataKey={category}
+          fill={colors ? colors[index % colors.length] : undefined}
+          radius={[4, 4, 0, 0]}
+        />
+      ))}
+    </RechartsBarChart>
+  </ChartContainer>
+);
+
+// Custom LineChart component using ChartContainer
+const LineChart = ({ 
+  data, 
+  categories, 
+  index, 
+  colors, 
+  valueFormatter, 
+  showLegend = true,
+  showXAxis = true,
+  showYAxis = true
+}) => (
+  <ChartContainer config={{}} className="h-full w-full">
+    <RechartsLineChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+      {showXAxis && <XAxis dataKey={index} />}
+      {showYAxis && <YAxis />}
+      <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip content={({ active, payload, label }) => {
+        if (active && payload?.length) {
+          return (
+            <div className="rounded-lg border border-border bg-background p-2 shadow-sm">
+              <div className="font-medium">{label}</div>
+              <div className="mt-1 flex flex-col gap-0.5">
+                {payload.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div 
+                      className="h-2 w-2 rounded-full" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {item.name}: {valueFormatter ? valueFormatter(item.value) : item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+        return null;
+      }} />
+      {showLegend && <Legend />}
+      {categories.map((category, index) => (
+        <Line 
+          key={category}
+          type="monotone"
+          dataKey={category}
+          stroke={colors ? colors[index % colors.length] : undefined}
+          activeDot={{ r: 8 }}
+        />
+      ))}
+    </RechartsLineChart>
+  </ChartContainer>
+);
+
+// Custom PieChart component using ChartContainer
+const PieChart = ({ 
+  data, 
+  category, 
+  index, 
+  colors, 
+  valueFormatter 
+}) => (
+  <ChartContainer config={{}} className="h-full w-full">
+    <RechartsPieChart margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+      <Pie
+        data={data}
+        cx="50%"
+        cy="50%"
+        labelLine={false}
+        outerRadius={80}
+        fill="#8884d8"
+        dataKey={category}
+        nameKey={index}
+        label={({ name, percent }) => `${name} ${valueFormatter ? valueFormatter(percent * 100) : `${(percent * 100).toFixed(0)}%`}`}
+      >
+        {data.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={colors ? colors[index % colors.length] : undefined} />
+        ))}
+      </Pie>
+      <Tooltip content={({ active, payload }) => {
+        if (active && payload?.length) {
+          const item = payload[0];
+          return (
+            <div className="rounded-lg border border-border bg-background p-2 shadow-sm">
+              <div className="font-medium">{item.name}</div>
+              <div className="mt-1 flex items-center gap-2">
+                <div 
+                  className="h-2 w-2 rounded-full" 
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {valueFormatter ? valueFormatter(item.value) : item.value}
+                </span>
+              </div>
+            </div>
+          );
+        }
+        return null;
+      }} />
+    </RechartsPieChart>
+  </ChartContainer>
+);
 
 export function PerformanceAnalytics() {
   // Sample data - in a real application, this would come from the backend
