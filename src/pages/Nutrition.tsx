@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { PieChart, Coffee, Utensils, Clock } from "lucide-react";
+import { TodaysMeals } from "@/components/nutrition/TodaysMeals";
+import { AddFoodDialog } from "@/components/nutrition/AddFoodDialog";
 
 interface FoodItem {
   id: string;
@@ -22,127 +24,11 @@ interface FoodItem {
   sugar_g: number;
 }
 
-interface UserMeal {
-  id: string;
-  user_id: string;
-  meal_type: string;
-  meal_date: string;
-  items?: MealItem[];
-}
-
-interface MealItem {
-  id: string;
-  meal_id: string;
-  food_item_id: string;
-  quantity: number;
-  food_item?: FoodItem;
-}
-
-// Mock data for food items
-const mockFoodItems: FoodItem[] = [
-  {
-    id: '1',
-    name: 'Grilled Chicken Breast',
-    serving_size: '100g',
-    calories: 165,
-    protein_g: 31,
-    carbs_g: 0,
-    fat_g: 3.6,
-    fiber_g: 0,
-    sugar_g: 0
-  },
-  {
-    id: '2',
-    name: 'Brown Rice',
-    serving_size: '100g cooked',
-    calories: 112,
-    protein_g: 2.6,
-    carbs_g: 23,
-    fat_g: 0.9,
-    fiber_g: 1.8,
-    sugar_g: 0.4
-  },
-  {
-    id: '3',
-    name: 'Avocado',
-    serving_size: '1/2 medium',
-    calories: 161,
-    protein_g: 2,
-    carbs_g: 8.5,
-    fat_g: 15,
-    fiber_g: 6.7,
-    sugar_g: 0.7
-  },
-  {
-    id: '4',
-    name: 'Greek Yogurt',
-    serving_size: '170g',
-    calories: 100,
-    protein_g: 18,
-    carbs_g: 6,
-    fat_g: 0,
-    fiber_g: 0,
-    sugar_g: 6
-  },
-  {
-    id: '5',
-    name: 'Salmon',
-    serving_size: '100g',
-    calories: 208,
-    protein_g: 20,
-    carbs_g: 0,
-    fat_g: 13,
-    fiber_g: 0,
-    sugar_g: 0
-  }
-];
-
-// Mock data for meals
-const mockMeals: UserMeal[] = [
-  {
-    id: '1',
-    user_id: '1',
-    meal_type: 'breakfast',
-    meal_date: new Date().toISOString().split('T')[0],
-    items: [
-      {
-        id: '1',
-        meal_id: '1',
-        food_item_id: '4',
-        quantity: 1,
-        food_item: mockFoodItems[3]
-      }
-    ]
-  },
-  {
-    id: '2',
-    user_id: '1',
-    meal_type: 'lunch',
-    meal_date: new Date().toISOString().split('T')[0],
-    items: [
-      {
-        id: '2',
-        meal_id: '2',
-        food_item_id: '1',
-        quantity: 1,
-        food_item: mockFoodItems[0]
-      },
-      {
-        id: '3',
-        meal_id: '2',
-        food_item_id: '2',
-        quantity: 1,
-        food_item: mockFoodItems[1]
-      }
-    ]
-  }
-];
-
 const Nutrition = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [foodItems, setFoodItems] = useState<FoodItem[]>(mockFoodItems);
-  const [todayMeals, setTodayMeals] = useState<UserMeal[]>(mockMeals);
+  const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { toast } = useToast();
 
   // Nutrition data for demonstration
@@ -153,39 +39,23 @@ const Nutrition = () => {
     fat: { consumed: 45, target: 65 },
   };
 
+  const refreshData = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   useEffect(() => {
     const fetchNutritionData = async () => {
       try {
-        const today = new Date().toISOString().split('T')[0];
-        
-        // In a real implementation, you would fetch food items from the database:
-        /*
         // Fetch food database items
         const { data: foodData, error: foodError } = await supabase
           .from("food_items")
           .select("*")
-          .limit(20);
+          .order("name");
         
         if (foodError) throw foodError;
         if (foodData && foodData.length > 0) {
           setFoodItems(foodData);
         }
-
-        // Fetch user's meals for today
-        const { data: session } = await supabase.auth.getSession();
-        if (session.session?.user?.id) {
-          const { data: mealsData, error: mealsError } = await supabase
-            .from("user_meals")
-            .select(`*, items:meal_items(*, food_item:food_items(*))`)
-            .eq("user_id", session.session.user.id)
-            .eq("meal_date", today);
-          
-          if (mealsError) throw mealsError;
-          if (mealsData && mealsData.length > 0) {
-            setTodayMeals(mealsData);
-          }
-        }
-        */
       } catch (error) {
         console.error("Error fetching nutrition data:", error);
         toast({
@@ -199,7 +69,7 @@ const Nutrition = () => {
     };
 
     fetchNutritionData();
-  }, [toast]);
+  }, [toast, refreshTrigger]);
 
   const filteredFoodItems = foodItems.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -270,33 +140,7 @@ const Nutrition = () => {
                     </CardContent>
                   </Card>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    {['Breakfast', 'Lunch', 'Dinner'].map((mealType) => (
-                      <Card key={mealType}>
-                        <CardHeader className="pb-2">
-                          <div className="flex items-center">
-                            {mealType === 'Breakfast' && <Coffee className="h-4 w-4 mr-2" />}
-                            {mealType === 'Lunch' && <Utensils className="h-4 w-4 mr-2" />}
-                            {mealType === 'Dinner' && <Clock className="h-4 w-4 mr-2" />}
-                            <CardTitle className="text-lg">{mealType}</CardTitle>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="text-sm space-y-1">
-                          {todayMeals.find(meal => meal.meal_type === mealType.toLowerCase())?.items?.map((item) => (
-                            <div key={item.id} className="flex justify-between">
-                              <span>{item.food_item?.name}</span>
-                              <span>{item.food_item?.calories && Math.round(item.food_item.calories * item.quantity)} kcal</span>
-                            </div>
-                          )) || <p className="text-muted-foreground">No items logged</p>}
-                        </CardContent>
-                        <CardFooter>
-                          <Button variant="ghost" size="sm" className="w-full">
-                            Add Food
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
+                  <TodaysMeals />
                 </div>
                 
                 <div>
@@ -366,9 +210,7 @@ const Nutrition = () => {
                       </div>
                     </CardContent>
                     <CardFooter>
-                      <Button variant="ghost" size="sm" className="w-full">
-                        Add to Meal
-                      </Button>
+                      <AddFoodDialog onFoodAdded={refreshData} />
                     </CardFooter>
                   </Card>
                 ))}

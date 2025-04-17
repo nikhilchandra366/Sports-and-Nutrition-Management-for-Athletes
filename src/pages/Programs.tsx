@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dumbbell, Calendar, ArrowRight, TrendingUp, Video, Utensils, Activity } from "lucide-react";
+import { Dumbbell, Calendar, ArrowRight, TrendingUp, Video, Activity } from "lucide-react";
 import { ExerciseVideo } from "@/components/programs/ExerciseVideo";
 import { WorkoutSchedule } from "@/components/programs/WorkoutSchedule";
 import { PerformanceAnalytics } from "@/components/programs/PerformanceAnalytics";
@@ -143,10 +143,16 @@ const Programs = () => {
                         {category.description}
                       </CardDescription>
                     </CardContent>
-                    <CardFooter>
-                      <Button asChild variant="ghost" className="ml-auto group">
+                    <CardFooter className="flex justify-between">
+                      <Button asChild variant="outline" className="group">
+                        <a href={`/sport/${category.id}`}>
+                          Sport Details
+                          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </a>
+                      </Button>
+                      <Button asChild variant="ghost" className="group">
                         <a href={`/programs/${category.id}`}>
-                          Explore
+                          Explore Programs
                           <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </a>
                       </Button>

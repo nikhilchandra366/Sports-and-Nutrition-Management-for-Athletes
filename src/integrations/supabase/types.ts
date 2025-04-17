@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      food_items: {
+        Row: {
+          calories: number
+          carbs_g: number
+          created_at: string
+          fat_g: number
+          fiber_g: number
+          id: string
+          name: string
+          protein_g: number
+          serving_size: string
+          sugar_g: number
+        }
+        Insert: {
+          calories: number
+          carbs_g: number
+          created_at?: string
+          fat_g: number
+          fiber_g: number
+          id?: string
+          name: string
+          protein_g: number
+          serving_size: string
+          sugar_g: number
+        }
+        Update: {
+          calories?: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          fiber_g?: number
+          id?: string
+          name?: string
+          protein_g?: number
+          serving_size?: string
+          sugar_g?: number
+        }
+        Relationships: []
+      }
       forum_categories: {
         Row: {
           description: string | null
@@ -26,6 +65,86 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      forum_topics: {
+        Row: {
+          category_id: string
+          content: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          category_id: string
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          category_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_topics_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "forum_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_items: {
+        Row: {
+          created_at: string
+          food_item_id: string
+          id: string
+          meal_id: string
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          food_item_id: string
+          id?: string
+          meal_id: string
+          quantity: number
+        }
+        Update: {
+          created_at?: string
+          food_item_id?: string
+          id?: string
+          meal_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_items_food_item_id_fkey"
+            columns: ["food_item_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meal_items_meal_id_fkey"
+            columns: ["meal_id"]
+            isOneToOne: false
+            referencedRelation: "user_meals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sport_categories: {
         Row: {
@@ -47,6 +166,47 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      sport_details: {
+        Row: {
+          created_at: string
+          id: string
+          image_urls: string[] | null
+          regulations: string | null
+          rules: string | null
+          sport_category_id: string
+          strategies: string | null
+          training_drills: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          regulations?: string | null
+          rules?: string | null
+          sport_category_id: string
+          strategies?: string | null
+          training_drills?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          regulations?: string | null
+          rules?: string | null
+          sport_category_id?: string
+          strategies?: string | null
+          training_drills?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sport_details_sport_category_id_fkey"
+            columns: ["sport_category_id"]
+            isOneToOne: false
+            referencedRelation: "sport_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       training_programs: {
         Row: {
@@ -88,6 +248,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_meals: {
+        Row: {
+          created_at: string
+          id: string
+          meal_date: string
+          meal_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meal_date: string
+          meal_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meal_date?: string
+          meal_type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
