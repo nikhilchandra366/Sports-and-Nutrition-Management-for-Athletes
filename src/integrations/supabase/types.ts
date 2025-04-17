@@ -9,7 +9,86 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      forum_categories: {
+        Row: {
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      sport_categories: {
+        Row: {
+          description: string | null
+          icon_url: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      training_programs: {
+        Row: {
+          created_by: string | null
+          description: string
+          difficulty_level: string
+          duration_weeks: number
+          id: string
+          is_public: boolean | null
+          sport_category_id: string | null
+          title: string
+        }
+        Insert: {
+          created_by?: string | null
+          description: string
+          difficulty_level: string
+          duration_weeks: number
+          id?: string
+          is_public?: boolean | null
+          sport_category_id?: string | null
+          title: string
+        }
+        Update: {
+          created_by?: string | null
+          description?: string
+          difficulty_level?: string
+          duration_weeks?: number
+          id?: string
+          is_public?: boolean | null
+          sport_category_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_programs_sport_category_id_fkey"
+            columns: ["sport_category_id"]
+            isOneToOne: false
+            referencedRelation: "sport_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
