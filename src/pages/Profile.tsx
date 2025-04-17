@@ -30,6 +30,20 @@ const profileSchema = z.object({
 
 type ProfileValues = z.infer<typeof profileSchema>;
 
+// Type for the profile data from Supabase
+interface Profile {
+  id: string;
+  username: string;
+  full_name: string | null;
+  bio: string | null;
+  weight: number | null;
+  height: number | null;
+  age: number | null;
+  gender: string | null;
+  activity_level: string | null;
+  fitness_goal: string | null;
+}
+
 const Profile = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -114,10 +128,15 @@ const Profile = () => {
     try {
       // Convert numeric strings to numbers
       const numericData = {
-        ...data,
+        username: data.username,
+        full_name: data.full_name,
+        bio: data.bio,
         weight: data.weight ? parseFloat(data.weight) : null,
         height: data.height ? parseFloat(data.height) : null,
         age: data.age ? parseInt(data.age, 10) : null,
+        gender: data.gender,
+        activity_level: data.activity_level,
+        fitness_goal: data.fitness_goal,
       };
       
       const { error } = await supabase

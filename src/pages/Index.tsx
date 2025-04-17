@@ -16,14 +16,14 @@ import { supabase } from '@/integrations/supabase/client';
 interface SportCategory {
   id: string;
   name: string;
-  description: string;
-  icon_url: string;
+  description: string | null;
+  icon_url: string | null;
 }
 
 interface ForumCategory {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
 }
 
 const Index = () => {
@@ -108,8 +108,8 @@ const Index = () => {
                   <SportCard
                     key={sport.id}
                     title={sport.name}
-                    description={sport.description}
-                    icon={sport.icon_url}
+                    description={sport.description || ''}
+                    icon={sport.icon_url || ''}
                     to={`/sports/${sport.id}`}
                   />
                 ))}
@@ -186,7 +186,7 @@ const Index = () => {
                     </CardHeader>
                     <CardContent>
                       <CardDescription className="text-foreground/80">
-                        {category.description}
+                        {category.description || ''}
                       </CardDescription>
                       <div className="mt-4">
                         <Button variant="outline" asChild>
