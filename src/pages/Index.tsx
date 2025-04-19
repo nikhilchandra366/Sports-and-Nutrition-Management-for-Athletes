@@ -1,218 +1,109 @@
 
-import { useState, useEffect } from 'react';
-import { SportCard } from '@/components/ui/card-sport';
-import { Navbar } from '@/components/layout/Navbar';
-import { Button } from '@/components/ui/button';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from "@/components/layout/Navbar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SportGrid } from "@/components/sports/SportGrid";
 
-// Types for our data
-interface SportCategory {
-  id: string;
-  name: string;
-  description: string | null;
-  icon_url: string | null;
-}
-
-interface ForumCategory {
-  id: string;
-  name: string;
-  description: string | null;
-}
-
-const Index = () => {
-  const [sports, setSports] = useState<SportCategory[]>([]);
-  const [forumCategories, setForumCategories] = useState<ForumCategory[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      
-      // Fetch sport categories
-      const { data: sportsData, error: sportsError } = await supabase
-        .from('sport_categories')
-        .select('*');
-      
-      if (sportsError) {
-        console.error('Error fetching sports:', sportsError);
-      } else {
-        setSports(sportsData || []);
-      }
-      
-      // Fetch forum categories
-      const { data: forumData, error: forumError } = await supabase
-        .from('forum_categories')
-        .select('*');
-      
-      if (forumError) {
-        console.error('Error fetching forum categories:', forumError);
-      } else {
-        setForumCategories(forumData || []);
-      }
-      
-      setLoading(false);
-    }
-    
-    fetchData();
-  }, []);
-
+export default function Index() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="flex-grow">
+      <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
-        <section className="bg-primary/5 py-16 md:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                Your Complete Sports & Nutrition Platform
-              </h1>
-              <p className="mt-4 text-xl text-muted-foreground max-w-2xl mx-auto">
-                Track your training, manage your nutrition, and connect with like-minded athletes on your fitness journey.
-              </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-4">
-                <Button size="lg" className="font-semibold" asChild>
-                  <a href="/programs">Explore Training Programs</a>
-                </Button>
-                <Button size="lg" variant="outline" className="font-semibold" asChild>
-                  <a href="/nutrition">Track Nutrition</a>
-                </Button>
-              </div>
+        <section className="py-12 md:py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+              Your Complete Sports & Fitness Companion
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Discover training programs, nutrition plans, and techniques tailored to your favorite sports.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button asChild size="lg">
+                <a href="/auth">Get Started</a>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <a href="/community">Join Community</a>
+              </Button>
             </div>
           </div>
         </section>
-        
-        {/* Sports Categories Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-foreground">Sport Categories</h2>
-              <p className="mt-2 text-lg text-muted-foreground">
-                Find training programs specific to your preferred sport
-              </p>
-            </div>
-            
-            {loading ? (
-              <div className="text-center py-10">Loading sports categories...</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {sports.map((sport) => (
-                  <SportCard
-                    key={sport.id}
-                    title={sport.name}
-                    description={sport.description || ''}
-                    icon={sport.icon_url || ''}
-                    to={`/sport/${sport.id}`}
-                  />
-                ))}
-              </div>
-            )}
+
+        {/* Featured Sports Section */}
+        <section className="py-12">
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold mb-2">Explore Sports</h2>
+            <p className="text-muted-foreground">
+              Find detailed information, training resources, and nutrition guides for your favorite sports
+            </p>
           </div>
+          
+          <SportGrid />
         </section>
-        
+
         {/* Features Section */}
-        <section className="py-16 bg-secondary/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-foreground">Key Features</h2>
-              <p className="mt-2 text-lg text-muted-foreground">
-                Everything you need to achieve your fitness goals
-              </p>
-            </div>
+        <section className="py-12">
+          <h2 className="text-3xl font-bold mb-10 text-center">Why Choose Athlete Aligned</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Personalized Programs</CardTitle>
+                <CardDescription>
+                  Training routines tailored to your sport, skill level, and goals
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  Our adaptive training systems adjust to your progress, ensuring you're always challenged and improving.
+                </p>
+              </CardContent>
+            </Card>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Training Programs</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-foreground/80">
-                    Access personalized workout plans tailored to your specific sport, skill level, and goals.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Nutrition Tracking</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-foreground/80">
-                    Log your meals, track macros, and get insights to optimize your nutrition for performance.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Progress Monitoring</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-foreground/80">
-                    Track your improvements with visual analytics and stay motivated on your fitness journey.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Sport-Specific Nutrition</CardTitle>
+                <CardDescription>
+                  Dietary plans optimized for your sport's unique demands
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  Fuel your performance with nutrition guidance tailored to support training, recovery, and competition.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Progress Tracking</CardTitle>
+                <CardDescription>
+                  Monitor your improvements with comprehensive analytics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  Visualize your journey with detailed metrics and insights that help identify strengths and areas for growth.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </section>
-        
-        {/* Community Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-foreground">Join Our Community</h2>
-              <p className="mt-2 text-lg text-muted-foreground">
-                Connect with athletes, share experiences, and learn from others
-              </p>
-            </div>
-            
-            {loading ? (
-              <div className="text-center py-10">Loading community topics...</div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {forumCategories.map((category) => (
-                  <Card key={category.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <CardTitle>{category.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className="text-foreground/80">
-                        {category.description || ''}
-                      </CardDescription>
-                      <div className="mt-4">
-                        <Button variant="outline" asChild>
-                          <a href={`/community/${category.id}`}>Join Discussion</a>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+
+        {/* Call to Action */}
+        <section className="py-12 bg-primary/5 rounded-lg my-12">
+          <div className="text-center max-w-2xl mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-4">Ready to elevate your performance?</h2>
+            <p className="text-lg mb-8">
+              Join thousands of athletes who've transformed their training with personalized guidance.
+            </p>
+            <Button size="lg" asChild>
+              <a href="/auth">Create Free Account</a>
+            </Button>
           </div>
         </section>
       </main>
-      
-      <footer className="bg-muted py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-muted-foreground">
-              © {new Date().getFullYear()} AthleteAligned. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
-};
-
-export default Index;
+}
