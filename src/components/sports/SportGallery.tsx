@@ -15,6 +15,7 @@ export function SportGallery({ sportId }: SportGalleryProps) {
   useEffect(() => {
     const fetchSportImages = async () => {
       try {
+        // Using the correct table name that exists in our database
         const { data, error } = await supabase
           .from("sport_details")
           .select("image_urls")
@@ -26,12 +27,8 @@ export function SportGallery({ sportId }: SportGalleryProps) {
         }
 
         if (data && data.image_urls) {
-          // The data comes as a text array, convert to actual array
-          const formattedImages = Array.isArray(data.image_urls) 
-            ? data.image_urls 
-            : JSON.parse(data.image_urls.replace(/'/g, '"'));
-            
-          setImages(formattedImages);
+          // Handle the array of image URLs
+          setImages(data.image_urls);
         }
       } catch (err) {
         console.error("Error fetching sport images:", err);

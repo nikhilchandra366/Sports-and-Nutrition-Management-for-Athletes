@@ -35,6 +35,7 @@ export function SportDetails({ sportId }: SportDetailsProps) {
   useEffect(() => {
     const fetchSportDetails = async () => {
       try {
+        // Using proper table name that we know exists in our database
         const { data, error: fetchError } = await supabase
           .from("sport_details")
           .select("*")
