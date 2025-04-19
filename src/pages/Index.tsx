@@ -110,7 +110,7 @@ const Index = () => {
                     title={sport.name}
                     description={sport.description || ''}
                     icon={sport.icon_url || ''}
-                    to={`/sports/${sport.id}`}
+                    to={`/sport/${sport.id}`}
                   />
                 ))}
               </div>

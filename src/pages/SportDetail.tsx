@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SportDetails } from "@/components/sports/SportDetails";
 import { SportGallery } from "@/components/sports/SportGallery";
+import { SportDietPlan } from "@/components/sports/SportDietPlan";
 
 interface SportCategory {
   id: string;
@@ -94,8 +95,8 @@ const SportDetail = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <a href="/programs" className="text-primary hover:underline">
-            ← Back to All Sports
+          <a href="/" className="text-primary hover:underline">
+            ← Back to Home
           </a>
         </div>
 
@@ -120,6 +121,8 @@ const SportDetail = () => {
               <SportGallery sportId={id || ''} />
             </CardContent>
           </Card>
+          
+          <SportDietPlan sportId={id || ''} sportName={sport.name} />
           
           <Card>
             <CardHeader>

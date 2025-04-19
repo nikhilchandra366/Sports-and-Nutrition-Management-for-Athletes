@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -15,6 +16,14 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // Profile fields
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [gender, setGender] = useState("");
+  const [activityLevel, setActivityLevel] = useState("");
+  const [fitnessGoal, setFitnessGoal] = useState("");
+  const [showProfileFields, setShowProfileFields] = useState(false);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -35,22 +44,65 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const createProfile = async (userId: string) => {
+    try {
+      const { error } = await supabase.from('profiles').insert({
+        id: userId,
+        username,
+        full_name: fullName,
+        gender,
+        activity_level: activityLevel,
+        fitness_goal: fitnessGoal
+      });
+
+      if (error) throw error;
+      
+    } catch (error: any) {
+      console.error("Error creating profile:", error.message);
+      toast({
+        variant: "destructive",
+        title: "Profile creation failed",
+        description: error.message || "Failed to create user profile"
+      });
+    }
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!showProfileFields) {
+      setShowProfileFields(true);
+      return;
+    }
+    
+    // Validate profile fields
+    if (!username || !fullName) {
+      toast({
+        variant: "destructive",
+        title: "Missing information",
+        description: "Username and full name are required"
+      });
+      return;
+    }
+    
     setLoading(true);
     
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
 
       if (error) throw error;
       
-      toast({
-        title: "Account created",
-        description: "Please check your email for confirmation",
-      });
+      if (data.user) {
+        await createProfile(data.user.id);
+        
+        toast({
+          title: "Account created",
+          description: "Please check your email for confirmation",
+        });
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -175,10 +227,83 @@ const Auth = () => {
                       Password must be at least 6 characters
                     </p>
                   </div>
+                  
+                  {showProfileFields && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="username">Username</Label>
+                        <Input
+                          id="username"
+                          type="text"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName">Full Name</Label>
+                        <Input
+                          id="fullName"
+                          type="text"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="gender">Gender</Label>
+                        <Select onValueChange={setGender} value={gender}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="non-binary">Non-binary</SelectItem>
+                            <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="activityLevel">Activity Level</Label>
+                        <Select onValueChange={setActivityLevel} value={activityLevel}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select activity level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sedentary">Sedentary (little or no exercise)</SelectItem>
+                            <SelectItem value="light">Light (1-3 days/week)</SelectItem>
+                            <SelectItem value="moderate">Moderate (3-5 days/week)</SelectItem>
+                            <SelectItem value="active">Active (6-7 days/week)</SelectItem>
+                            <SelectItem value="very-active">Very Active (twice/day)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="fitnessGoal">Fitness Goal</Label>
+                        <Select onValueChange={setFitnessGoal} value={fitnessGoal}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select fitness goal" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="lose-weight">Lose Weight</SelectItem>
+                            <SelectItem value="maintain">Maintain Weight</SelectItem>
+                            <SelectItem value="gain-muscle">Gain Muscle</SelectItem>
+                            <SelectItem value="improve-performance">Improve Performance</SelectItem>
+                            <SelectItem value="increase-endurance">Increase Endurance</SelectItem>
+                            <SelectItem value="general-fitness">General Fitness</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
                 <CardFooter>
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Creating account..." : "Sign Up"}
+                    {showProfileFields 
+                      ? (loading ? "Creating account..." : "Complete Sign Up") 
+                      : "Continue"
+                    }
                   </Button>
                 </CardFooter>
               </form>
