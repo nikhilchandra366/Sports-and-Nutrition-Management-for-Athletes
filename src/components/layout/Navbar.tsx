@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from "@/components/ui/alert-dialog";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,6 +79,31 @@ export function Navbar() {
     { name: "Community", path: "/community", icon: <MessageSquare className="h-5 w-5" /> },
   ];
 
+  const SignOutButton = () => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">
+          <LogOut className="h-5 w-5 mr-2" />
+          Sign out
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You will be logged out of your account and redirected to the home page.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleSignOut}>
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   return (
     <nav className="bg-background border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,7 +114,6 @@ export function Navbar() {
             </Link>
           </div>
           
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-4">
             {navItems.map((item) => (
               <Link 
@@ -102,10 +136,7 @@ export function Navbar() {
                       Profile
                     </Link>
                   </Button>
-                  <Button variant="outline" onClick={handleSignOut}>
-                    <LogOut className="h-5 w-5 mr-2" />
-                    Sign out
-                  </Button>
+                  <SignOutButton />
                 </div>
               ) : (
                 <Button asChild>
@@ -118,7 +149,6 @@ export function Navbar() {
             </div>
           </div>
           
-          {/* Mobile nav toggle */}
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
             <button
@@ -136,7 +166,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -162,16 +191,35 @@ export function Navbar() {
                     <User className="h-5 w-5 mr-2" />
                     Profile
                   </Link>
-                  <button
-                    onClick={() => {
-                      handleSignOut();
-                      closeMenu();
-                    }}
-                    className="flex w-full items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
-                  >
-                    <LogOut className="h-5 w-5 mr-2" />
-                    Sign out
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button
+                        className="flex w-full items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                      >
+                        <LogOut className="h-5 w-5 mr-2" />
+                        Sign out
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You will be logged out of your account and redirected to the home page.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel onClick={closeMenu}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={() => {
+                            handleSignOut();
+                            closeMenu();
+                          }}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               ) : (
                 <Link
