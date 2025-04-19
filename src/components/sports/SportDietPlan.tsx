@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -28,58 +27,54 @@ interface DietPlan {
   competition_day: string;
   recommended_foods: string[];
   sample_meal_plan: string;
+  created_at: string;
 }
 
 export function SportDietPlan({ sportId, sportName }: SportDietPlanProps) {
   const [dietPlan, setDietPlan] = useState<DietPlan | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDietPlan = async () => {
       try {
-        // Generate generic diet plan if no custom one exists
-        const generateGenericDietPlan = (sportName: string) => {
-          return {
-            id: "generic",
-            sport_category_id: sportId,
-            general_guidance: `${sportName} athletes should focus on a balanced diet rich in complex carbohydrates, lean proteins, and healthy fats. Carbohydrates should make up about 45-65% of daily caloric intake to fuel training, while protein should be 15-25% to support muscle recovery. Stay well-hydrated throughout the day, especially before, during, and after training sessions.`,
-            before_workout: `2-3 hours before: A balanced meal with complex carbs, some protein, and a little healthy fat (e.g., whole grain pasta with lean meat and vegetables).\n1 hour before: A light carbohydrate-rich snack (e.g., banana, toast with honey, or a small smoothie).`,
-            during_workout: `For sessions longer than 60 minutes: Water mixed with electrolytes, sports drinks, or easily digestible carbohydrates like energy gels or chews (30-60g carbs per hour for high-intensity ${sportName.toLowerCase()}).`,
-            after_workout: `Within 30 minutes: Protein and carbohydrates to aid recovery (20-25g protein, 50-100g carbohydrates). Examples include chocolate milk, a protein shake with fruit, or a balanced meal.`,
-            rest_day: `Focus on nutrient-dense foods and possibly slightly reduce carbohydrate intake depending on activity level. This is a good time to ensure adequate intake of vegetables, fruits, and foods rich in micronutrients.`,
-            competition_day: `Pre-competition: Familiar, easily digestible meal 3-4 hours before (rich in carbs, moderate protein, low fat and fiber).\nDuring: Hydration and quick energy as needed.\nPost-competition: Recovery nutrition with carbs and protein.`,
-            recommended_foods: [
-              "Whole grains (brown rice, quinoa, oats)",
-              "Lean proteins (chicken, fish, tofu, eggs)",
-              "Fruits and vegetables",
-              "Healthy fats (avocados, nuts, olive oil)",
-              "Dairy or alternatives (milk, yogurt)",
-              "Hydration (water, sports drinks)"
-            ],
-            sample_meal_plan: `Breakfast: Oatmeal with fruit, nuts, and Greek yogurt\nSnack: Apple with almond butter\nLunch: Brown rice bowl with grilled chicken and mixed vegetables\nPre-workout: Banana and whole grain toast with honey\nPost-workout: Protein shake with banana and berries\nDinner: Salmon, sweet potato, and steamed vegetables\nEvening snack: Greek yogurt with berries`
-          };
-        };
-
-        // Check if custom diet plans exist in database
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from("sport_diet_plans")
           .select("*")
           .eq("sport_category_id", sportId)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== "PGRST116") {
-          console.error("Error fetching diet plan:", error);
-          throw error;
+        if (fetchError) {
+          throw fetchError;
         }
 
-        // Use custom plan if exists, otherwise generate generic one
         if (data) {
           setDietPlan(data as DietPlan);
         } else {
-          setDietPlan(generateGenericDietPlan(sportName));
+          const genericPlan: DietPlan = {
+            id: "generic",
+            sport_category_id: sportId,
+            general_guidance: `${sportName} athletes should focus on a balanced diet rich in complex carbohydrates, lean proteins, and healthy fats.`,
+            before_workout: "2-3 hours before: A balanced meal with complex carbs and protein.",
+            during_workout: "Stay hydrated and maintain energy levels with appropriate nutrition.",
+            after_workout: "Within 30 minutes: Protein and carbohydrates for recovery.",
+            rest_day: "Focus on nutrient-dense foods and maintain good hydration.",
+            competition_day: "Pre-event: Familiar, easily digestible foods.\nDuring: Stay hydrated.\nPost: Recovery nutrition.",
+            recommended_foods: [
+              "Complex carbohydrates",
+              "Lean proteins",
+              "Fruits and vegetables",
+              "Healthy fats",
+              "Hydration"
+            ],
+            sample_meal_plan: "Breakfast: Balanced meal\nSnack: Light energy\nLunch: Protein with carbs\nPre-workout: Light snack\nPost-workout: Recovery\nDinner: Complete meal",
+            created_at: new Date().toISOString()
+          };
+          setDietPlan(genericPlan);
         }
       } catch (err) {
         console.error("Error handling diet plan:", err);
+        setError(err instanceof Error ? err.message : "Failed to load diet plan");
       } finally {
         setLoading(false);
       }
@@ -96,6 +91,18 @@ export function SportDietPlan({ sportId, sportName }: SportDietPlanProps) {
         <Skeleton className="w-full h-8" />
         <Skeleton className="w-full h-60" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            {error}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -142,7 +149,7 @@ export function SportDietPlan({ sportId, sportName }: SportDietPlanProps) {
 
           <TabsContent value="general" className="space-y-4">
             <div className="prose max-w-none text-foreground">
-              <p>{dietPlan.general_guidance}</p>
+              <p>{dietPlan?.general_guidance}</p>
             </div>
           </TabsContent>
 
@@ -150,27 +157,27 @@ export function SportDietPlan({ sportId, sportName }: SportDietPlanProps) {
             <div className="space-y-6">
               <div>
                 <h3 className="font-medium text-lg mb-2">Before Workout/Training</h3>
-                <p className="whitespace-pre-line text-muted-foreground">{dietPlan.before_workout}</p>
+                <p className="whitespace-pre-line text-muted-foreground">{dietPlan?.before_workout}</p>
               </div>
               
               <div>
                 <h3 className="font-medium text-lg mb-2">During Workout/Training</h3>
-                <p className="whitespace-pre-line text-muted-foreground">{dietPlan.during_workout}</p>
+                <p className="whitespace-pre-line text-muted-foreground">{dietPlan?.during_workout}</p>
               </div>
               
               <div>
                 <h3 className="font-medium text-lg mb-2">After Workout/Training</h3>
-                <p className="whitespace-pre-line text-muted-foreground">{dietPlan.after_workout}</p>
+                <p className="whitespace-pre-line text-muted-foreground">{dietPlan?.after_workout}</p>
               </div>
               
               <div>
                 <h3 className="font-medium text-lg mb-2">Rest Days</h3>
-                <p className="whitespace-pre-line text-muted-foreground">{dietPlan.rest_day}</p>
+                <p className="whitespace-pre-line text-muted-foreground">{dietPlan?.rest_day}</p>
               </div>
               
               <div>
                 <h3 className="font-medium text-lg mb-2">Competition/Game Day</h3>
-                <p className="whitespace-pre-line text-muted-foreground">{dietPlan.competition_day}</p>
+                <p className="whitespace-pre-line text-muted-foreground">{dietPlan?.competition_day}</p>
               </div>
             </div>
           </TabsContent>
@@ -178,7 +185,7 @@ export function SportDietPlan({ sportId, sportName }: SportDietPlanProps) {
           <TabsContent value="foods" className="space-y-4">
             <div className="prose max-w-none">
               <ul className="space-y-2">
-                {dietPlan.recommended_foods.map((food, index) => (
+                {dietPlan?.recommended_foods.map((food, index) => (
                   <li key={index} className="text-foreground">{food}</li>
                 ))}
               </ul>
@@ -187,7 +194,7 @@ export function SportDietPlan({ sportId, sportName }: SportDietPlanProps) {
 
           <TabsContent value="sample" className="space-y-4">
             <div className="prose max-w-none">
-              <p className="whitespace-pre-line text-foreground">{dietPlan.sample_meal_plan}</p>
+              <p className="whitespace-pre-line text-foreground">{dietPlan?.sample_meal_plan}</p>
             </div>
           </TabsContent>
         </Tabs>

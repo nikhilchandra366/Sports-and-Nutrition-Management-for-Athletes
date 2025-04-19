@@ -208,6 +208,56 @@ export type Database = {
           },
         ]
       }
+      sport_diet_plans: {
+        Row: {
+          after_workout: string
+          before_workout: string
+          competition_day: string
+          created_at: string | null
+          during_workout: string
+          general_guidance: string
+          id: string
+          recommended_foods: string[]
+          rest_day: string
+          sample_meal_plan: string
+          sport_category_id: string
+        }
+        Insert: {
+          after_workout: string
+          before_workout: string
+          competition_day: string
+          created_at?: string | null
+          during_workout: string
+          general_guidance: string
+          id?: string
+          recommended_foods: string[]
+          rest_day: string
+          sample_meal_plan: string
+          sport_category_id: string
+        }
+        Update: {
+          after_workout?: string
+          before_workout?: string
+          competition_day?: string
+          created_at?: string | null
+          during_workout?: string
+          general_guidance?: string
+          id?: string
+          recommended_foods?: string[]
+          rest_day?: string
+          sample_meal_plan?: string
+          sport_category_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sport_diet_plans_sport_category_id_fkey"
+            columns: ["sport_category_id"]
+            isOneToOne: false
+            referencedRelation: "sport_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_programs: {
         Row: {
           created_by: string | null
