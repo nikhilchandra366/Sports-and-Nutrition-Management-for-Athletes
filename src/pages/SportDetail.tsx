@@ -9,6 +9,11 @@ import { SportDetails } from "@/components/sports/SportDetails";
 import { SportGallery } from "@/components/sports/SportGallery";
 import { SportDietPlan } from "@/components/sports/SportDietPlan";
 import { BadmintonCourt } from "@/components/sports/BadmintonCourt";
+import { BasketballCourt } from "@/components/sports/BasketballCourt";
+import { SoccerField } from "@/components/sports/SoccerField";
+import { CricketGround } from "@/components/sports/CricketGround";
+import { TennisCourt } from "@/components/sports/TennisCourt";
+import { VolleyballCourt } from "@/components/sports/VolleyballCourt";
 
 interface SportCategory {
   id: string;
@@ -50,6 +55,26 @@ const SportDetail = () => {
 
     fetchSportData();
   }, [id, toast]);
+
+  const renderCourtDimensions = () => {
+    const sportName = sport?.name.toLowerCase();
+    switch (sportName) {
+      case "badminton":
+        return <BadmintonCourt />;
+      case "basketball":
+        return <BasketballCourt />;
+      case "soccer":
+        return <SoccerField />;
+      case "cricket":
+        return <CricketGround />;
+      case "tennis":
+        return <TennisCourt />;
+      case "volleyball":
+        return <VolleyballCourt />;
+      default:
+        return null;
+    }
+  };
 
   if (loading) {
     return (
@@ -112,11 +137,7 @@ const SportDetail = () => {
 
         <div className="grid grid-cols-1 gap-8">
           <SportDetails sportId={id || ''} />
-          
-          {sport.name.toLowerCase() === "badminton" && (
-            <BadmintonCourt />
-          )}
-          
+          {renderCourtDimensions()}
           <Card>
             <CardHeader>
               <CardTitle>Image Gallery</CardTitle>
