@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SportDetails } from "@/components/sports/SportDetails";
-import { SportGallery } from "@/components/sports/SportGallery";
 import { SportDietPlan } from "@/components/sports/SportDietPlan";
 import { BadmintonCourt } from "@/components/sports/BadmintonCourt";
 import { BasketballCourt } from "@/components/sports/BasketballCourt";
@@ -138,15 +137,6 @@ const SportDetail = () => {
         <div className="grid grid-cols-1 gap-8">
           <SportDetails sportId={id || ''} />
           {renderCourtDimensions()}
-          <Card>
-            <CardHeader>
-              <CardTitle>Image Gallery</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SportGallery sportId={id || ''} />
-            </CardContent>
-          </Card>
-          
           <SportDietPlan sportId={id || ''} sportName={sport.name} />
           
           <Card>
