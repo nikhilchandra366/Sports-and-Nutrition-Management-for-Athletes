@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SportDetails } from "@/components/sports/SportDetails";
 import { SportGallery } from "@/components/sports/SportGallery";
 import { SportDietPlan } from "@/components/sports/SportDietPlan";
+import { BadmintonCourt } from "@/components/sports/BadmintonCourt";
 
 interface SportCategory {
   id: string;
@@ -112,6 +112,10 @@ const SportDetail = () => {
 
         <div className="grid grid-cols-1 gap-8">
           <SportDetails sportId={id || ''} />
+          
+          {sport.name.toLowerCase() === "badminton" && (
+            <BadmintonCourt />
+          )}
           
           <Card>
             <CardHeader>
